@@ -4,30 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoT Portfolio Dashboard</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-900 text-white font-sans p-6">    
-    <div class="max-w-md mx-auto">
-        <h1 class="text-3xl font-bold mb-6 text-center text-blue-400">Safety System Dashboard</h1>
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
-            <h2 class="text-xl font-semibold mb-4 border-b border-gray-600 pb-2">Sensor Readings</h2>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-gray-700 p-3 rounded text-center">
-                    <p class="text-gray-400 text-sm">Temperature</p>
-                    <p class="text-2xl font-bold text-yellow-400" id="tempDisplay">-- °C</p>
-                </div>
-                <div class="bg-gray-700 p-3 rounded text-center">
-                    <p class="text-gray-400 text-sm">Gas Level</p>
-                    <p class="text-2xl font-bold text-green-400" id="gasDisplay">--</p>
-                </div>
-                <div class="bg-gray-700 p-3 rounded text-center">
-                    <p class="text-gray-400 text-sm">Fire Status</p>
-                    <p class="text-2xl font-bold text-red-500" id="fireDisplay">--</p>
+<body class="bg-gray-900 text-white font-sans p-4 md:p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+        <header class="text-center">
+            <h1 class="text-4xl font-bold text-blue-400">Internet of Things</h1>
+        </header>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 text-blue-300">Live Monitor</h2>
+                <div class="grid grid-cols-2 gap-4 text-center">
+                    <div class="p-3 bg-gray-700 rounded-lg">
+                        <p class="text-gray-400 text-xs">TEMPERATURE</p>
+                        <p id="tempDisplay" class="text-2xl font-bold text-yellow-400">-- °C</p>
+                    </div>
+                    <div class="p-3 bg-gray-700 rounded-lg">
+                        <p class="text-gray-400 text-xs">HUMIDITY</p>
+                        <p id="humDisplay" class="text-2xl font-bold text-blue-400">-- %</p>
+                    </div>
+                    <div class="p-3 bg-gray-700 rounded-lg">
+                        <p class="text-gray-400 text-xs">FIRE STATUS</p>
+                        <p id="fireDisplay" class="text-2xl font-bold text-gray-400">--</p>
+                    </div>
                 </div>
             </div>
-
-            
             <div class="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
                 <h2 class="text-xl font-semibold mb-4 text-purple-300">Data Analysis</h2>
                 <div class="space-y-4">
@@ -40,7 +44,6 @@
                             <div id="safetyBar" class="bg-green-500 h-2.5 rounded-full" style="width: 100%"></div>
                         </div>
                     </div>
-
                     <div class="grid grid-cols-2 gap-2 text-sm">
                         <div class="bg-gray-700 p-2 rounded">
                             <span class="block text-gray-500 text-xs">AVG TEMP (Last 20)</span>
@@ -67,26 +70,28 @@
             </div>
         </div>
 
-            <p class="text-xs text-gray-500 mt-2 text-center" id="lastUpdated">Waiting for data...</p>
-        </div>
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h2 class="text-xl font-semibold mb-4 border-b border-gray-600 pb-2">Remote Controls</h2>
-            <div class="flex items-center justify-between mb-6">
-                <span class="text-lg">Operation Mode:</span>
-                <button id="btnAuto" onclick="setMode(true)" class="px-4 py-2 bg-green-600 rounded opacity-50">Auto</button>
-                <button id="btnManual" onclick="setMode(false)" class="px-4 py-2 bg-gray-600 rounded">Manual</button>
-            </div>
-            <div id="manualControls" class="opacity-50 pointer-events-none transition-opacity duration-300 space-y-4">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-orange-300">Cloud Control</h2>
                 <div>
-                    <label class="block mb-2">Window Angle: <span id="angleVal">0</span>°</label>
-                    <input type="range" min="0" max="180" value="0" id="sliderWindow" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <button id="btnAuto" onclick="setMode(true)" class="px-3 py-1 text-sm bg-green-600 rounded mr-2">Auto</button>
+                    <button id="btnManual" onclick="setMode(false)" class="px-3 py-1 text-sm bg-gray-600 rounded">Manual</button>
                 </div>
-                <div class="flex justify-between gap-2">
-                    <button onclick="toggleFan()" id="btnFan" class="flex-1 py-3 bg-blue-700 rounded hover:bg-blue-600 font-bold">Fan OFF</button>
-                    <button onclick="toggleBuzzer()" id="btnBuzzer" class="flex-1 py-3 bg-red-700 rounded hover:bg-red-600 font-bold">Buzzer OFF</button>
+            </div>
+
+            <div id="manualControls" class="opacity-50 pointer-events-none transition-all duration-300 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-xs text-gray-400">Window Opening Angle</label>
+                    <input type="range" min="0" max="180" value="0" id="sliderWindow" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer mt-2">
+                    <div class="text-right text-xs mt-1"><span id="angleVal">0</span>°</div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="toggleFan()" id="btnFan" class="flex-1 bg-blue-700 rounded hover:bg-blue-600 text-sm font-bold transition">Toggle Fan</button>
+                    <button onclick="toggleBuzzer()" id="btnBuzzer" class="flex-1 bg-red-700 rounded hover:bg-red-600 text-sm font-bold transition">Toggle Buzzer</button>
                 </div>
             </div>
         </div>
+
     </div>
 
     <script>
@@ -170,7 +175,6 @@
             chartInstance.update();
         }
         let currentState = { is_auto_mode: true, fan_on: false, buzzer_on: false, window_angle: 0 };
-
         async function fetchState() {
             const { data } = await supabase.from('device_state').select('*').eq('id', 1).single();
             if (data) {
@@ -178,7 +182,6 @@
                 updateControlUI();
             }
         }
-
         function updateControlUI() {
             const manualDiv = document.getElementById('manualControls');
             const btnAuto = document.getElementById('btnAuto');
@@ -219,7 +222,6 @@
         setInterval(fetchState, 2000);
         fetchAndAnalyze();
         fetchState();
-
     </script>
 </body>
 </html>
